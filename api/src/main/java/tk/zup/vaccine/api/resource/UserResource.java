@@ -27,14 +27,18 @@ public class UserResource {
 
   @PostMapping(path = "/users")
   public ResponseEntity<UserResponseDTO> create(@RequestBody UserDTO userDTO){
-    
+    try {
+      User user = modelMapper.map(userDTO, User.class);
+      user.setVaccinations(new ArrayList<Vaccination>());
+      User savedUser = userService.save(user);
+      
+      UserResponseDTO userResponseDTO = modelMapper.map(savedUser, UserResponseDTO.class);
+      
+      return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDTO);
+      
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new UserResponseDTO());
+    }
 
-    User user = modelMapper.map(userDTO, User.class);
-    user.setVaccinations(new ArrayList<Vaccination>());
-    User savedUser = userService.save(user);
-    
-    UserResponseDTO userResponseDTO = modelMapper.map(savedUser, UserResponseDTO.class);
-    
-    return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDTO);
   }
 }
