@@ -1,19 +1,14 @@
 package tk.zup.vaccine.api.resource;
 
-import java.util.ArrayList;
 import javax.validation.Valid;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import tk.zup.vaccine.api.model.User;
-import tk.zup.vaccine.api.model.Vaccination;
 import tk.zup.vaccine.api.model.dto.UserDTO;
 import tk.zup.vaccine.api.model.dto.UserResponseDTO;
 import tk.zup.vaccine.api.service.UserService;
@@ -24,25 +19,12 @@ public class UserResource {
   @Autowired
   private UserService userService;
 
-  @Autowired
-  private ModelMapper modelMapper;
-
   @PostMapping(path = "/users")
   public ResponseEntity<UserResponseDTO> create(@Valid @RequestBody UserDTO userDTO){
-
-    User user = modelMapper.map(userDTO, User.class);
-    user.setVaccinations(new ArrayList<Vaccination>());
-    User savedUser = userService.save(user);
     
-    UserResponseDTO userResponseDTO = modelMapper.map(savedUser, UserResponseDTO.class);
+    UserResponseDTO userResponseDTO = userService.save(userDTO);
     
     return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDTO);
       
-  }
-
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<String> handleValidationExceptions(Exception e){
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-      .body(e.getMessage());
   }
 }
