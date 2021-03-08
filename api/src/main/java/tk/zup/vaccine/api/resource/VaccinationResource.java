@@ -1,9 +1,16 @@
 package tk.zup.vaccine.api.resource;
 
+
+import java.util.Optional;
+
+
+import javax.validation.Valid;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,19 +35,28 @@ public class VaccinationResource {
   private ModelMapper modelMapper;
 
   @PostMapping(path = "/vaccinations")
-  public ResponseEntity<VaccinationResponseDTO> create(@RequestBody VaccinationDTO vaccinationDTO){
-    try {
-      Vaccination vaccination = modelMapper.map(vaccinationDTO, Vaccination.class);
-      User user = userService.findById(vaccinationDTO.getPatientId()).orElseThrow();
-      vaccination.setPatient(user);
-      Vaccination savedVaccination = vaccinationService.save(vaccination);
-      
-      VaccinationResponseDTO vaccinationResponseDTO = modelMapper.map(savedVaccination, VaccinationResponseDTO.class);
+  public ResponseEntity<VaccinationResponseDTO> create(@Valid @RequestBody VaccinationDTO vaccinationDTO) throws Exception{
+    Vaccination vaccination = modelMapper.map(vaccinationDTO, Vaccination.class);
+
+    Optional<User> user = userService.findById(vaccinationDTO.getPatientId());
+    if(user.isPresent()){
+      vaccination.setPatient(user.get());
+    } else {
+      throw new Exception("There`s no Patient in our database with the referred Id");
+    }
+
+    Vaccination savedVaccination = vaccinationService.save(vaccination);
+    
+    VaccinationResponseDTO vaccinationResponseDTO = modelMapper
+      .map(savedVaccination, VaccinationResponseDTO.class);
       
       return ResponseEntity.status(HttpStatus.CREATED).body(vaccinationResponseDTO);
       
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new VaccinationResponseDTO());
-    }
+  }
+
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<String> handleValidationExceptions(Exception e){
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+      .body(e.getMessage());
   }
 }
