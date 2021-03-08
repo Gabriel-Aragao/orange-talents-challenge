@@ -13,8 +13,9 @@ public class VaccinationDTO {
   @NotBlank
   private String vaccineName;
   @NotNull
-  private Long patientId;
+  private Long userId;
 
+  @NotNull
   private LocalDate vaccinationDate;
   
 }

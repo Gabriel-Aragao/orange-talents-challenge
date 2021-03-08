@@ -28,11 +28,11 @@ public class VaccinationService {
   public VaccinationResponseDTO save(VaccinationDTO vaccinationDTO) throws SQLDataException{
     Vaccination vaccination = modelMapper.map(vaccinationDTO, Vaccination.class);
 
-    User user = userService.findById(vaccinationDTO.getPatientId()).orElseThrow(
-      () -> new SQLDataException("Patient Id Not finded in database")
+    User user = userService.findById(vaccinationDTO.getUserId()).orElseThrow(
+      () -> new SQLDataException("User Id Not finded in database")
     );
 
-    vaccination.setPatient(user);
+    vaccination.setUser(user);
  
 
     Vaccination savedVaccination = vaccinationRepository.save(vaccination);

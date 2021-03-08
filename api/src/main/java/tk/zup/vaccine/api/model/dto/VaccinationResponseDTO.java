@@ -9,8 +9,8 @@ public class VaccinationResponseDTO {
   
   private Long id;
   private String vaccineName;
-  private String patientName;
-  private String patientCPF;
-  private String patientEmail;
+  private String userName;
+  private String userCPF;
+  private String userEmail;
   private LocalDate vaccinationDate;
 }

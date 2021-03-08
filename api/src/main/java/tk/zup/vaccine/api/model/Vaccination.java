@@ -25,7 +25,7 @@ public class Vaccination {
   private String vaccineName;
 
   @ManyToOne
-  @JoinColumn(name = "patient_id", nullable = false)
-  private User patient;
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
   private LocalDate vaccinationDate;
 }

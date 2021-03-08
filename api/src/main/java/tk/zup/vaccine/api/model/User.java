@@ -29,7 +29,7 @@ public class User {
   private String cpf;
   private LocalDate birthday;
   
-  @OneToMany(mappedBy = "patient")
+  @OneToMany(mappedBy = "user")
   private List<Vaccination> vaccinations;
 
 }
