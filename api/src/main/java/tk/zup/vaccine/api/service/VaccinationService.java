@@ -29,7 +29,7 @@ public class VaccinationService {
     Vaccination vaccination = modelMapper.map(vaccinationDTO, Vaccination.class);
 
     User user = userService.findById(vaccinationDTO.getUserId()).orElseThrow(
-      () -> new SQLDataException("User Id Not finded in database")
+      () -> new SQLDataException("User Id Not found in database")
     );
 
     vaccination.setUser(user);
